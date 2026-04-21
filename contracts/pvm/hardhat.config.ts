@@ -1,7 +1,17 @@
 import type { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-viem";
-import "@parity/hardhat-polkadot";
+import "@nomicfoundation/hardhat-verify";
 import { vars } from "hardhat/config";
+import { defineChain } from "viem";
+
+export const polkadotHubTestnet = defineChain({
+	id: 420420417,
+	name: "Polkadot Hub TestNet",
+	nativeCurrency: { name: "Unit", symbol: "UNIT", decimals: 18 },
+	rpcUrls: {
+		default: { http: ["https://services.polkadothub-rpc.com/testnet"] },
+	},
+});
 
 const config: HardhatUserConfig = {
 	solidity: "0.8.28",
@@ -10,7 +20,7 @@ const config: HardhatUserConfig = {
 	},
 	networks: {
 		local: {
-			// Local node Ethereum RPC endpoint (via eth-rpc adapter)
+			// Local node Ethereum RPC endpoint
 			url: process.env.ETH_RPC_HTTP || "http://127.0.0.1:8545",
 			accounts: [
 				// Alice dev account private key
@@ -22,6 +32,21 @@ const config: HardhatUserConfig = {
 			chainId: 420420417,
 			accounts: [process.env.PRIVATE_KEY ?? vars.get("PRIVATE_KEY", "")].filter(Boolean),
 		},
+	},
+	etherscan: {
+		apiKey: {
+			polkadotTestnet: "no-api-key-needed",
+		},
+		customChains: [
+			{
+				network: "polkadotTestnet",
+				chainId: 420420417,
+				urls: {
+					apiURL: "https://blockscout-testnet.polkadot.io/api",
+					browserURL: "https://blockscout-testnet.polkadot.io/",
+				},
+			},
+		],
 	},
 };
 
